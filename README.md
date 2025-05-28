@@ -1,7 +1,6 @@
 # 📚 Üniversite Kütüphane Sistemi - OpenAPI 3.0 Tanımı
-
-Bu proje, bir üniversiteye ait çevrim içi kütüphane sistemine ilişkin REST API yapısını **OpenAPI 3.0.3** standardına uygun olarak tanımlamaktadır. Amaç, öğrenci, kitap ve ödünç işlemlerinin standart HTTP metodları üzerinden kolaylıkla entegre edilebilir ve dokümante edilebilir hale getirilmesidir.
-
+Bu çalışma, BLM3062 - Açık Kaynak Kodlu Yazılımlar dersi kapsamında hazırlanmıştır.
+Bu proje, bir üniversiteye ait çevrim içi kütüphane sisteilişkin REST API yapısını **OpenAPI 3.0.3** standardına uygun olarak tanımlamaktadır.
 ---
 
 ## 📝 API Açıklaması
@@ -69,12 +68,6 @@ Tüm CRUD işlemleri RESTful ilkelere uygun olarak tanımlanmıştır:
 - **Sayfalama**, `GET /books` endpoint’inde `page` ve `size` parametreleri ile desteklenmektedir.
 - **Hatalar**, `400` (geçersiz istek), `404` (bulunamadı), `500` (sunucu hatası) gibi durum kodlarıyla tanımlanmıştır.
 - `PATCH /loans/{id}/return` gibi özel işlemler için ayrı endpoint oluşturularak kaynak tasarımı bozulmadan iade işlemi modellenmiştir.
-
----
-
-## 🔐 Güvenlik
-
-OpenAPI spesifikasyonu içinde `ApiKeyAuth` başlığı tanımlanarak, örnek bir API anahtarı doğrulama yöntemi gösterilmiştir.
 
 ---
 
