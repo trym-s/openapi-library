@@ -1,0 +1,337 @@
+openapi: 3.0.3
+info:
+  title: Üniversite Kütüphane Sistemi API
+  description: Öğrenci, kitap ve ödünç işlemlerini yöneten REST API
+  version: "1.0.0"
+
+servers:
+  - url: http://localhost:3000
+
+tags:
+  - name: Books
+    description: Kitap işlemleri
+  - name: Students
+    description: Öğrenci işlemleri
+  - name: Loans
+    description: Ödünç işlemleri
+
+paths:
+  /books:
+    get:
+      tags: [Books]
+      summary: Tüm kitapları getir
+      parameters:
+        - name: page
+          in: query
+          description: Sayfa numarası
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: size
+          in: query
+          description: Sayfa başı öğe sayısı
+          required: false
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Kitap listesi
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+    post:
+      tags: [Books]
+      summary: Yeni kitap ekle
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Book'
+      responses:
+        '201':
+          description: Kitap oluşturuldu
+          content:
+            application/json:
+              example:
+                id: "123e4567-e89b-12d3-a456-426614174000"
+                title: "Sefiller"
+                author: "Victor Hugo"
+                isbn: "978-3-16-148410-0"
+                publisher: "Can Yayınları"
+                pageCount: 864
+                stock: 5
+        '400':
+          description: Geçersiz veri
+
+  /books/{id}:
+    get:
+      tags: [Books]
+      summary: Kitap bilgisi getir
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Kitap bulundu
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '404':
+          description: Kitap bulunamadı
+
+    put:
+      tags: [Books]
+      summary: Kitap güncelle
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Book'
+      responses:
+        '200':
+          description: Güncellendi
+        '400':
+          description: Geçersiz veri
+        '404':
+          description: Bulunamadı
+
+    delete:
+      tags: [Books]
+      summary: Kitap sil
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Silindi
+        '404':
+          description: Bulunamadı
+
+  /students:
+    get:
+      tags: [Students]
+      summary: Tüm öğrencileri getir
+      responses:
+        '200':
+          description: Öğrenci listesi
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Student'
+
+    post:
+      tags: [Students]
+      summary: Yeni öğrenci ekle
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Student'
+      responses:
+        '201':
+          description: Oluşturuldu
+
+  /students/{id}:
+    get:
+      tags: [Students]
+      summary: Öğrenci bilgisi getir
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Bulundu
+        '404':
+          description: Bulunamadı
+
+    put:
+      tags: [Students]
+      summary: Öğrenci güncelle
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Student'
+      responses:
+        '200':
+          description: Güncellendi
+        '404':
+          description: Bulunamadı
+
+    delete:
+      tags: [Students]
+      summary: Öğrenci sil
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Silindi
+
+  /loans:
+    get:
+      tags: [Loans]
+      summary: Tüm ödünç kayıtlarını getir
+      responses:
+        '200':
+          description: Kayıt listesi
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Loan'
+
+    post:
+      tags: [Loans]
+      summary: Kitap ödünç al
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Loan'
+      responses:
+        '201':
+          description: Ödünç verildi
+
+  /loans/{id}:
+    get:
+      tags: [Loans]
+      summary: Ödünç bilgisi getir
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Bilgi bulundu
+
+  /loans/{id}/return:
+    patch:
+      tags: [Loans]
+      summary: Kitabı iade et
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Kitap iade edildi
+        '404':
+          description: Kayıt bulunamadı
+
+components:
+  schemas:
+    Book:
+      type: object
+      required: [title, author, isbn, publisher, pageCount, stock]
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        author:
+          type: string
+        isbn:
+          type: string
+          format: isbn
+        publisher:
+          type: string
+        pageCount:
+          type: integer
+        stock:
+          type: integer
+
+    Student:
+      type: object
+      required: [name, studentNumber, email, isActive]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        studentNumber:
+          type: string
+        email:
+          type: string
+          format: email
+        isActive:
+          type: boolean
+
+    Loan:
+      type: object
+      required: [studentId, bookId, loanDate, status]
+      properties:
+        id:
+          type: string
+          format: uuid
+        studentId:
+          type: string
+        bookId:
+          type: string
+        loanDate:
+          type: string
+          format: date
+        returnDate:
+          type: string
+          format: date
+          nullable: true
+        status:
+          type: string
+          enum: [ongoing, returned, late]
+
+security:
+  - ApiKeyAuth: []
+
+securitySchemes:
+  ApiKeyAuth:
+    type: apiKey
+    in: header
+    name: X-API-Key
+
